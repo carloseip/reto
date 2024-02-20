@@ -1,0 +1,33 @@
+version: '3.9'
+
+volumes:
+  volume_db:
+    name: volume_db
+
+services:
+  app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=r2dbc:postgresql://db:5432/postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+    ports:
+      - 8080:8080
+
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - volume_db:/var/lib/postgresql/data
+
